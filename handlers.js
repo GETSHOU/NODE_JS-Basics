@@ -27,24 +27,25 @@ const getNotes = async () => {
 const removeNote = async (id) => {
   const notes = await getNotes();
 
-  const noteIndex = notes.findIndex((note) => note.id === id);
+  const filteredNotes = notes.filter((note) => note.id !== id);
 
-  if (noteIndex !== -1) {
-    console.log(`Note by id "${id}" was removed`);
-
-    notes.splice(noteIndex, 1);
-
-    await fs.writeFile(notesPath, JSON.stringify(notes));
-  } else {
+  if (filteredNotes.length === notes.length) {
     console.log(`Note not found`);
+    return;
   }
+
+  await fs.writeFile(notesPath, JSON.stringify(filteredNotes));
+
+  console.log(`Note was removed`);
 };
 
 const printNotes = async () => {
   const notes = await getNotes();
 
+  console.log("Here is the list of notes:");
+
   notes.forEach(({ id, title }) => {
-    console.log(`Here is the list of notes:\n${id} ${title}`);
+    console.log(`${id} ${title}`);
   });
 };
 
